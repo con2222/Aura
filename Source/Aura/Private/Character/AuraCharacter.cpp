@@ -2,9 +2,12 @@
 
 
 #include "Character/AuraCharacter.h"
+
+#include "AbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Player/AuraPlayerState.h"
 
 AAuraCharacter::AAuraCharacter()
 {
@@ -28,11 +31,38 @@ AAuraCharacter::AAuraCharacter()
 	
 }
 
+void AAuraCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	
+	// For the server
+	InitAbilityActorInfo();
+	
+}
+
+void AAuraCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	
+	// For the client
+	InitAbilityActorInfo();
+}
+
 
 void AAuraCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AAuraCharacter::InitAbilityActorInfo()
+{
+	if (AAuraPlayerState* State = CastChecked<AAuraPlayerState>(GetPlayerState()))
+	{
+		AbilitySystemComponent = State->GetAbilitySystemComponent();
+		AttributeSet = State->GetAttributeSet();
+		State->GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
+	}
 }
 
 void AAuraCharacter::Tick(float DeltaTime)

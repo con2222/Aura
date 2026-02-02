@@ -17,6 +17,9 @@ class AURA_API AAuraCharacter : public AAuraBaseCharacter
 public:
 	AAuraCharacter();
 	
+	void PossessedBy(AController* NewController) override;
+	void OnRep_PlayerState() override;
+	
 	virtual void Tick(float DeltaTime) override;
 	
 protected:
@@ -29,5 +32,7 @@ private:
 	
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* CameraBoom;
+	
+	void InitAbilityActorInfo();
 
 };
