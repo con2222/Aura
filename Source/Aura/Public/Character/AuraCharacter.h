@@ -22,6 +22,10 @@ public:
 	
 	virtual void Tick(float DeltaTime) override;
 	
+	/** Combat Interface */
+	virtual int32 GetPlayerLevel() override;
+	/** end Combat Interface*/
+	
 protected:
 	
 	virtual void BeginPlay() override;
@@ -33,6 +37,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* CameraBoom;
 	
-	void InitAbilityActorInfo();
+	virtual void InitAbilityActorInfo() override;
 
 };

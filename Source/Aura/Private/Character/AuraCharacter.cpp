@@ -4,6 +4,7 @@
 #include "Character/AuraCharacter.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "UI/HUD/AuraHUD.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -59,23 +60,33 @@ void AAuraCharacter::BeginPlay()
 
 void AAuraCharacter::InitAbilityActorInfo()
 {
-	if (AAuraPlayerState* State = CastChecked<AAuraPlayerState>(GetPlayerState()))
+	AAuraPlayerState* State = CastChecked<AAuraPlayerState>(GetPlayerState());
+	check(State);
+	State->GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
+	Cast<UAuraAbilitySystemComponent>(State->GetAbilitySystemComponent())->AbilityActorInfoSet();
+	
+	AbilitySystemComponent = State->GetAbilitySystemComponent();
+	AttributeSet = State->GetAttributeSet();
+	
+	
+	if (AAuraPlayerController* AuraPlayerController = Cast<AAuraPlayerController> (GetController()))
 	{
-		AbilitySystemComponent = State->GetAbilitySystemComponent();
-		AttributeSet = State->GetAttributeSet();
-		State->GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
-		
-		if (AAuraPlayerController* AuraPlayerController = Cast<AAuraPlayerController> (GetController()))
+		if (AAuraHUD* AuraHUD = Cast<AAuraHUD>(AuraPlayerController->GetHUD()))
 		{
-			if (AAuraHUD* AuraHUD = Cast<AAuraHUD>(AuraPlayerController->GetHUD()))
-			{
-				AuraHUD->InitOverlay(AuraPlayerController, State, AbilitySystemComponent, AttributeSet);
-			}
+			AuraHUD->InitOverlay(AuraPlayerController, State, AbilitySystemComponent, AttributeSet);
 		}
 	}
+	InitializeDefaultAttributes();
 }
 
 void AAuraCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+int32 AAuraCharacter::GetPlayerLevel()
+{
+	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+	return AuraPlayerState->GetPlayerLevel();
 }
