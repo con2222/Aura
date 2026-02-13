@@ -25,7 +25,7 @@ struct FAuraAttributeInfo
 	float AttributeValue = 0.f;
 };
 
-/**
+/** 
  * 
  */
 UCLASS()
