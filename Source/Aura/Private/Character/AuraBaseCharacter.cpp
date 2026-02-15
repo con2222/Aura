@@ -1,6 +1,7 @@
 
 #include "Character/AuraBaseCharacter.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 
 AAuraBaseCharacter::AAuraBaseCharacter()
 {
@@ -20,6 +21,12 @@ void AAuraBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+FVector AAuraBaseCharacter::GetCombatSocketLocation()
+{
+	check(Weapon);
+	return Weapon->GetSocketLocation(WeaponTipSocketName);
 }
 
 void AAuraBaseCharacter::InitAbilityActorInfo()
@@ -42,4 +49,12 @@ void AAuraBaseCharacter::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
+}
+
+void AAuraBaseCharacter::AddCharacterAbilities()
+{
+	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	if (!HasAuthority() || !AuraASC) { return; }
+	
+	AuraASC->AddCharacterAbilities(StartupAbilities);
 }
