@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "Character/AuraBaseCharacter.h"
 #include "Interaction/EnemyInterface.h"
+#include "UI/WidgetController/OverlayWidgetController.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "AuraEnemy.generated.h"
+
 
 /**
  * 
@@ -28,13 +31,28 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly)
 	bool bHighlighted = false;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnHealthChanged;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnMaxHealthChanged;
+	
 protected:
 	virtual void BeginPlay() override;
+	virtual void InitializeDefaultAttributes() const override;
 	
 	virtual void InitAbilityActorInfo() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	int32 Level = 1;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
+	ECharacterClass CharacterClass = ECharacterClass::Warrior;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<class UWidgetComponent> HealthBar;
+	
 private:
 	
 };
