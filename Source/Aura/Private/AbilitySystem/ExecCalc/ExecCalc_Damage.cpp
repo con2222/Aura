@@ -71,9 +71,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const FRealCurve* EffectiveArmorCurve = CharacterClassInfo->DamageCalculationCoefficients->FindCurve(FName("EffectiveArmor"), FString());
 	const float EffectiveArmorCoef = EffectiveArmorCurve->Eval(TargetCombatInterface->GetPlayerLevel());
 	
-	const FRealCurve* CriticalHitChanceCurve = CharacterClassInfo->DamageCalculationCoefficients->FindCurve(
+	const FRealCurve* CriticalHitResistanceCurve = CharacterClassInfo->DamageCalculationCoefficients->FindCurve(
 		FName("CriticalHitResistance"), FString());
-	const float CriticalHitResistanceCoef = CriticalHitChanceCurve->Eval(TargetCombatInterface->GetPlayerLevel());
+	const float CriticalHitResistanceCoef = CriticalHitResistanceCurve->Eval(TargetCombatInterface->GetPlayerLevel());
 	
 	//Get Damage set by caller magnitude
 	float Damage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
@@ -103,8 +103,13 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	/* Critical Damage */
 	if (FMath::RandRange(0.f, 100.f) <= CriticalHitChance)
 	{
-		Damage *= (100 + CriticalHitDamage) / 100.f;
-		Damage *= (100 - CriticalHitResistance * CriticalHitResistanceCoef) / 100.f;
+		float DamageMultiplier = (200.f + CriticalHitDamage) / 100.f;
+		
+		float ResistanceReduction = CriticalHitResistance * CriticalHitResistanceCoef;
+		
+		float FinalCritMultiplier = FMath::Max(1.01f, DamageMultiplier - (ResistanceReduction / 100.f));
+		
+		Damage *= FinalCritMultiplier;
 	}
 	
 	// If block, halve the damage
