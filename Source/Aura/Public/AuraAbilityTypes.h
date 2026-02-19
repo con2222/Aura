@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "AuraAbilityTypes.h"
 #include "GameplayEffectTypes.h"
 #include "AuraAbilityTypes.generated.h"
 
@@ -17,7 +16,19 @@ struct FAuraGameplayEffectsContext : public FGameplayEffectContext
 	
 	virtual UScriptStruct* GetScriptStruct() const
 	{
-		return FGameplayEffectContext::StaticStruct();
+		return StaticStruct();
+	}
+	
+	virtual FAuraGameplayEffectsContext* Duplicate() const
+	{
+		FAuraGameplayEffectsContext* NewContext = new FAuraGameplayEffectsContext();
+		*NewContext = *this;
+		if (GetHitResult())
+		{
+			// Does a deep copy of the hit result
+			NewContext->AddHitResult(*GetHitResult(), true);
+		}
+		return NewContext;
 	}
 	
 	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess);
@@ -31,4 +42,14 @@ protected:
 	bool bIsCriticalHit = false;
 	
 	
+};
+
+template<>
+struct TStructOpsTypeTraits<FAuraGameplayEffectsContext> : public TStructOpsTypeTraitsBase2<FAuraGameplayEffectsContext>
+{
+	enum
+	{
+		WithNetSerializer = true,
+		WithCopy = true
+	};
 };

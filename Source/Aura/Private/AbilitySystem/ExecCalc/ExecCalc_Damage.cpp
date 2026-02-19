@@ -4,6 +4,7 @@
 #include "AbilitySystem/ExecCalc/ExecCalc_Damage.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystemComponent.h"
+#include "AuraAbilityTypes.h"
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Interaction/CombatInterface.h"
@@ -58,6 +59,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 	
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
+	
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 	FAggregatorEvaluateParameters EvaluationParameters;
@@ -101,6 +104,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	CriticalHitResistance = FMath::Max<float>(CriticalHitResistance, 0.f);
 	
 	/* Critical Damage */
+	
+	CriticalHitChance = FMath::RoundToFloat(CriticalHitChance);
+	
 	if (FMath::RandRange(0.f, 100.f) <= CriticalHitChance)
 	{
 		float DamageMultiplier = (200.f + CriticalHitDamage) / 100.f;
@@ -110,12 +116,19 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		float FinalCritMultiplier = FMath::Max(1.01f, DamageMultiplier - (ResistanceReduction / 100.f));
 		
 		Damage *= FinalCritMultiplier;
+		
+		UAuraAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, true);
 	}
 	
 	// If block, halve the damage
+	
+	BlockChance = FMath::RoundToFloat(BlockChance);
+	
 	if (FMath::RandRange(0.f, 100.f) <= BlockChance)
 	{
-		Damage /= 2;	
+		Damage /= 2;
+		
+		UAuraAbilitySystemLibrary::SetIsBlockedHit(EffectContextHandle, true);
 	}
 	
 	float TargetArmor = 0.f;
