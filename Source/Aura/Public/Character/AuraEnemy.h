@@ -19,6 +19,7 @@ class AURA_API AAuraEnemy : public AAuraBaseCharacter, public IEnemyInterface
 	GENERATED_BODY()
 public:
 	AAuraEnemy();
+	virtual void PossessedBy(AController* NewController) override;
 	
 	/** Enemy Interface */
 	virtual void HighlightActor() override;
@@ -65,6 +66,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UWidgetComponent> HealthBar;
 	
+	UPROPERTY(EditAnywhere, Category = "AI")
+	TObjectPtr<class UBehaviorTree> BehaviorTree;
+	
+	UPROPERTY()
+	TObjectPtr<class AAuraAIController> AuraAIController;
 private:
 	
 };
