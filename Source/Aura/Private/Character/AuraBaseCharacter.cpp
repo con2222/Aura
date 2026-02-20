@@ -1,6 +1,7 @@
 
 #include "Character/AuraBaseCharacter.h"
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
 
@@ -47,6 +48,7 @@ void AAuraBaseCharacter::MulticastHandleDeath_Implementation()
 	
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Dissolve();
+	bDead = true;
 }
 
 void AAuraBaseCharacter::BeginPlay()
@@ -55,10 +57,40 @@ void AAuraBaseCharacter::BeginPlay()
 	
 }
 
-FVector AAuraBaseCharacter::GetCombatSocketLocation()
+FVector AAuraBaseCharacter::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
 {
-	check(Weapon);
-	return Weapon->GetSocketLocation(WeaponTipSocketName);
+	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+	if (MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_Weapon) && IsValid(Weapon))
+	{
+		return Weapon->GetSocketLocation(WeaponTipSocketName);
+	}
+	if (MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_LeftHand))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, TEXT("Left Hand"));
+		return GetMesh()->GetSocketLocation(LeftHandSocketName);
+	}
+	if (MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_RightHand))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, TEXT("Right Hand"));
+		return GetMesh()->GetSocketLocation(RightHandSocketName);
+	}
+	
+	return FVector();
+}
+
+bool AAuraBaseCharacter::IsDead_Implementation() const
+{
+	return bDead;
+}
+
+AActor* AAuraBaseCharacter::GetAvatar_Implementation()
+{
+	return this;
+}
+
+TArray<FTaggedMontage> AAuraBaseCharacter::GetAttackMontages_Implementation()
+{
+	return AttackMontages;
 }
 
 void AAuraBaseCharacter::InitAbilityActorInfo()
