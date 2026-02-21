@@ -28,6 +28,8 @@ public:
 	virtual AActor* GetAvatar_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
+	virtual int32 GetMinionCount_Implementation() override;
+	virtual void IncrementMinionCount_Implementation(int32 Amount) override;
 	/* End Combat Interface */
 	
 
@@ -50,6 +52,9 @@ protected:
     	
     UPROPERTY(EditAnywhere, Category = "Combat|Sockets")
     FName RightHandSocketName;
+	
+	UPROPERTY(EditAnywhere, Category = "Combat|Sockets")
+	FName TailSocketName;
 	
 	bool bDead = false;
 	
@@ -99,6 +104,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat|Effects")
 	USoundBase* DeathSound;
 	
+	/* Minions */
+	
+	int32 MinionCount = 0;
+
 private:
 	
 	UPROPERTY(EditAnywhere, Category = "Abilities")

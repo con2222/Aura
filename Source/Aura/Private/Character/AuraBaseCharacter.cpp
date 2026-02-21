@@ -75,6 +75,10 @@ FVector AAuraBaseCharacter::GetCombatSocketLocation_Implementation(const FGamepl
 	{
 		return GetMesh()->GetSocketLocation(RightHandSocketName);
 	}
+	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Tail))
+	{
+		return GetMesh()->GetSocketLocation(TailSocketName);
+	}
 	
 	return FVector();
 }
@@ -97,6 +101,16 @@ TArray<FTaggedMontage> AAuraBaseCharacter::GetAttackMontages_Implementation()
 UNiagaraSystem* AAuraBaseCharacter::GetBloodEffect_Implementation()
 {
 	return BloodEffect;
+}
+
+int32 AAuraBaseCharacter::GetMinionCount_Implementation()
+{
+	return MinionCount;
+}
+
+void AAuraBaseCharacter::IncrementMinionCount_Implementation(int32 Amount)
+{
+	MinionCount += Amount;
 }
 
 void AAuraBaseCharacter::InitAbilityActorInfo()
