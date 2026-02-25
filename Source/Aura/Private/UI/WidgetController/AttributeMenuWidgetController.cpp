@@ -4,11 +4,8 @@
 #include "UI/WidgetController/AttributeMenuWidgetController.h"
 
 #include "AbilitySystem/Data/AttributeInfo.h"
-#include "AssetDefinitionAssetInfo.h"
 #include "AbilitySystem/AuraAttributeSet.h"
-#include "AbilitySystem/Data/AttributeInfo.h"
-#include "AuraGameplayTags.h"
-#include "Misc/TrackedActivity.h"
+
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
