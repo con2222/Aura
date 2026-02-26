@@ -7,6 +7,8 @@
 #include "GameFramework/PlayerState.h"
 #include "AuraPlayerState.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChanged, int32 /*StatValue*/)
+
 /**
  * 
  */
@@ -21,6 +23,13 @@ public:
 	AAuraPlayerState();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	class UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<class ULevelUpInfo> LevelUpInfo;
+	
+	FOnPlayerStatChanged OnXPChangedDelegate;
+	FOnPlayerStatChanged OnLevelChangedDelegate;
+	
 protected:
 
     UPROPERTY(VisibleAnywhere)
@@ -33,10 +42,22 @@ private:
 	
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Level)
 	int32 Level = 1;
+	
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_XP)
+	int32 XP = 1;
 
 	UFUNCTION()
 	void OnRep_Level(int32 OldLevel);
+	
+	UFUNCTION()
+	void OnRep_XP(int32 OldXP);
 
 public:
 	FORCEINLINE int32 GetPlayerLevel() const { return Level; }
+	void AddPlayerLevel(int32 NewLevel);
+	void SetPlayerLevel(int32 NewLevel);
+	
+	FORCEINLINE int32 GetXP() const { return XP; }	
+	void AddToXP(int32 NewXP);
+	void SetXP(int32 NewXP);
 };

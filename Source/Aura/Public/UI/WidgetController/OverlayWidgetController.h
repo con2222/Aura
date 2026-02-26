@@ -9,6 +9,7 @@
 
 struct FAuraAbilityInfo;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAuraAbilityInfoSignature, const FAuraAbilityInfo&, Info);
 
@@ -63,6 +64,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Messages")
 	FAuraAbilityInfoSignature AbilityInfoDelegate;
 	
+	UPROPERTY(BlueprintAssignable, Category = "GAS|XP")
+	FOnAttributeChangedSignature OnXPPercentChangedDelegate;
+	
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Level")
+	FOnPlayerStatChangedSignature OnPlayerLevelChangedDelegate;
+	
 protected:
 	void HealthChanged(const struct FOnAttributeChangeData& Data) const;
 	
@@ -84,6 +91,8 @@ protected:
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
 	
 	void OnInitializeStartupAbilities(class UAuraAbilitySystemComponent* AuraAbilitySystemComponent);
+	
+	void OnXPChanged(int32 NewXP);
 };
 
 template <typename T>

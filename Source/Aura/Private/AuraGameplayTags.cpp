@@ -88,6 +88,12 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FString("Increase amount of mana obtainable")
 	);
 	
+	
+	GameplayTags.Attribute_Meta_IncomingXP = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Meta.IncomingXP"),
+		FString("Incoming XP Meta Attribute")
+	);
+	
 	/*
 	 * Input Tags
 	 */
