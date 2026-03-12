@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "UI/Widget/AuraUserWidget.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
+#include "UI/WidgetController/SpellMenuWidgetController.h"
 
 class UOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(const struct FWidgetControllerParams& WCParams)
 {
@@ -33,6 +34,17 @@ class UAttributeMenuWidgetController* AAuraHUD::GetAttributeMenuWidgetController
 		return AttributeMenuWidgetController;
 	}
 	return AttributeMenuWidgetController;
+}
+
+USpellMenuWidgetController* AAuraHUD::GetSpellMenuWidgetController(const struct FWidgetControllerParams& WCParams)
+{
+	if (SpellMenuWidgetController == nullptr)
+	{
+		SpellMenuWidgetController = NewObject<USpellMenuWidgetController>(this, SpellMenuWidgetControllerClass);
+		SpellMenuWidgetController->SetWidgetControllerParams(WCParams);
+		SpellMenuWidgetController->BindCallbacksToDependencies();
+	}
+	return SpellMenuWidgetController;
 }
 
 void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, class UAbilitySystemComponent* ASC,
